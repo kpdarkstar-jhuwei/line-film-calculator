@@ -23,7 +23,7 @@ LINE_CHANNEL_SECRET = os.environ.get('LINE_CHANNEL_SECRET')
 line_bot_api = LineBotApi(LINE_CHANNEL_ACCESS_TOKEN)
 handler = WebhookHandler(LINE_CHANNEL_SECRET)
 
-# 紀錄使用者選擇的時間與設定狀態 (格式: { user_id: {'start': ..., 'end': ..., 'daily_rate': ..., 'awaiting_rate': True/False } })
+# 紀錄使用者選擇的時間與設定狀態
 user_sessions = {}
 
 
@@ -114,16 +114,11 @@ def handle_message(event):
       rate = int(user_text)
       session['daily_rate'] = rate
       session['awaiting_rate'] = False
-      line_bot_api.reply_message(
-          event.reply_token,
-          TextSendMessage(
-              text=f'✅ 已成功設定日薪為：${rate:,} 元！\n\n請點擊下方按鈕選擇拍攝時間：'
-          ),
-      )
+      # 直接發送包含新日薪的主選單按鈕
       send_main_menu(
           event.reply_token,
           user_id,
-          f'✅ 已成功設定日薪為：${rate:,} 元！\n請選擇拍攝時間：',
+          f'✅ 已成功設定日薪為：${rate:,} 元！\n請點擊下方按鈕選擇拍攝時間：',
       )
     else:
       line_bot_api.reply_message(
